@@ -85,7 +85,7 @@ $(document).ready(function(){
 
 
 
-  $(".listeo_core-unbookmark-it").on('click', function(e){
+  $('body').on('click', ".listeo_core-unbookmark-it", function(e){
       e.preventDefault();
       var handler = $(this);
       var post_id = $(this).data("post_id");
@@ -1970,6 +1970,12 @@ $('#listeo_offer_price').on('change keyup',function(){
 $('.listing-item').find('.listeo_liting_single_tttt').click(function(){
 	console.log('listing-item');
 	//console.log($(this).data('url'));	
+});
+
+
+
+})(this.jQuery);
+/**/g($(this).data('url'));	
 });
 
 

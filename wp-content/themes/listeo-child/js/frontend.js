@@ -46,6 +46,7 @@ $(document).ready(function(){
   $('body').on('click', ".listeo_core-bookmark-it", function(e){
 
       e.preventDefault();
+      console.log("heree listeo_core-unbookmark-it 2");
       if($(this).is('.clicked,.liked')){
         return;
       }
@@ -85,7 +86,7 @@ $(document).ready(function(){
 
 
 
-  $(".listeo_core-unbookmark-it").on('click', function(e){
+  $('body').on('click', ".listeo_core-unbookmark-it", function(e){
       e.preventDefault();
       var handler = $(this);
       var post_id = $(this).data("post_id");
