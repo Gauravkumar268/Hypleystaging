@@ -20,7 +20,7 @@ class Listeo_Core_Messages {
         add_action( 'wp_ajax_listeo_create_offer', array( $this, 'listeo_create_offer' ) );
         add_action( 'wp_ajax_send_unverify_listing_msg', array( $this, 'send_unverify_listing_msg' ) );
 
-        
+
 	}
 
     /**
@@ -34,7 +34,8 @@ class Listeo_Core_Messages {
 
         // set user to check
         $strUser     = "cristian@hypley.com";
-        $strPassword = "Australia10";
+        $strPassword = "Resset!@#@134";
+
 
         // open
                 $hMail = imap_open ("{secure.emailsrvr.com:993/imap/ssl}INBOX", "$strUser", "$strPassword");
@@ -77,7 +78,7 @@ class Listeo_Core_Messages {
                 $temp_conversation_id=substr($info_from_email,0,strpos($info_from_email,"__"));
                 $temp_sender_id=(int)substr($info_from_email,strpos($info_from_email,"__")+2);
 
-                $users_results = $wpdb -> get_results( "SELECT user_1, user_2 FROM `" . $wpdb->prefix . "listeo_core_conversations` 
+                $users_results = $wpdb -> get_results( "SELECT user_1, user_2 FROM `" . $wpdb->prefix . "listeo_core_conversations`
                     WHERE  id = $temp_conversation_id");
 
                 foreach( $users_results as $result_row ) {
@@ -94,13 +95,13 @@ class Listeo_Core_Messages {
                     $message = substr($message, 0, strrpos($message, '<'));
                     if(strrpos($message, 'On ')>0) $message = substr($message, 0, strrpos($message, 'On '));
                 }
-                            
+
                 $result =  $wpdb -> insert( $wpdb->prefix . 'listeo_core_messages', array(
                         'conversation_id' 	=> $temp_conversation_id,
                         'sender_id' 		=> $temp_sender_id,
                         'message' 			=> $message,
                         'created_at' 		=> current_time( 'timestamp' )
-                ));	
+                ));
 
                 if(isset($wpdb->insert_id)) {
                     $id = $wpdb->insert_id;
@@ -126,7 +127,7 @@ class Listeo_Core_Messages {
 
         // // close
         imap_close( $hMail );
-  
+
     }
 
     /**
@@ -138,15 +139,15 @@ class Listeo_Core_Messages {
 
         //  global $wpdb;
         // if ( $limit != '' ) $limit = " LIMIT " . esc_sql($limit);
-        
+
         // if ( is_numeric($offset)) $offset = " OFFSET " . esc_sql($offset);
 
         // $result  = $wpdb -> get_results( "
-        // SELECT * FROM `" . $wpdb->prefix . "listeo_core_conversations` 
+        // SELECT * FROM `" . $wpdb->prefix . "listeo_core_conversations`
         // WHERE  user_1 = '$user_id' OR user_2 = '$user_id'
         // ORDER BY last_update DESC $limit $offset
         // ");
-        
+
         // return $result;
 
         // Notifie expiring in 5 days
@@ -156,17 +157,17 @@ class Listeo_Core_Messages {
                 OR read_user_2 = '0' )
                 AND notification != 'sent'
                 AND last_update < %s
-            ", strtotime( "-15 minutes" ) 
+            ", strtotime( "-15 minutes" )
         )
         );
 
         if ( $conversation_ids ) {
             foreach ( $conversation_ids as $conversation_id ) {
-                
+
                 do_action('listeo_mail_to_user_new_message',$conversation_id);
             }
         }
-  
+
     }
 
 	public  function start_conversation( $args = 0 )  {
@@ -177,8 +178,8 @@ class Listeo_Core_Messages {
         $read_user_1 = '1';
         $read_user_2 = '0';
 
-        $result =  $wpdb->insert( 
-            $wpdb->prefix . 'listeo_core_conversations', 
+        $result =  $wpdb->insert(
+            $wpdb->prefix . 'listeo_core_conversations',
             array(
                 'user_1' => get_current_user_id(), //sender
                 'user_2' => $args['recipient'], // recipeint
@@ -188,16 +189,16 @@ class Listeo_Core_Messages {
                 'read_user_2' => $read_user_2,
                 'notification' => '',
             ),
-            array( 
-                '%d',
-                '%d', 
-                '%s', 
+            array(
                 '%d',
                 '%d',
+                '%s',
                 '%d',
-            ) 
+                '%d',
+                '%d',
+            )
         );
-        
+
         if(isset($wpdb->insert_id)) {
             $id = $wpdb->insert_id;
             $mail_args = array(
@@ -211,15 +212,15 @@ class Listeo_Core_Messages {
 
         return $id;
     }
-	
-	
+
+
 	public  function reminder_new_message($args)  {
 
         global $wpdb;
-        $now_temp_time = current_time('timestamp');        
+        $now_temp_time = current_time('timestamp');
 		$remind_receiver = get_userdata($args['recipient']);
 		$remind_sender = get_userdata($args['sender_id']);
-		
+
 		$subject = 'Reminder Of New Message';
 		$body = '<div>'.
 					'<b>'.$remind_sender->display_name.'</b> is waiting for your respons.<br/><br/><br/>'.
@@ -227,12 +228,12 @@ class Listeo_Core_Messages {
 					'<p style="color: blue">'.$args['message'].'</p><br/><br/><br/>'.
 					'<p> Or send a message to <b>'.$remind_sender->display_name.'<b> by replying to this email. </p>'.
 				'</div>';
-		$reply_to = $args['conversation_id'].'__'.$args['sender_id'];	
-		self::send( $remind_receiver->user_email, $subject, $body ,'', $reply_to);        
+		$reply_to = $args['conversation_id'].'__'.$args['sender_id'];
+		self::send( $remind_receiver->user_email, $subject, $body ,'', $reply_to);
         return true;
-		
+
     }
-	
+
 	public static function send( $emailto, $subject, $body , $activation_link='', $reply_to=''){
 
 		$from_name 	= get_option('listeo_emails_name',get_bloginfo( 'name' ));
@@ -245,17 +246,17 @@ class Listeo_Core_Messages {
 		if( empty($emailto) || empty( $subject) || empty($body) ){
 			return ;
 		}
-															   
+
 		$template_loader = new listeo_core_Template_Loader;
 		ob_start();
 
 			$template_loader->get_template_part( 'emails/header' ); ?>
 			<tr>
-				<td align="left" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 25px; padding-right: 25px; padding-bottom: 28px; width: 87.5%; font-size: 16px; font-weight: 400; 
-				padding-top: 28px; 
+				<td align="left" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 25px; padding-right: 25px; padding-bottom: 28px; width: 87.5%; font-size: 16px; font-weight: 400;
+				padding-top: 28px;
 				color: #666;
 				font-family: sans-serif;" class="paragraph">
-				<?php 
+				<?php
 					echo $body;
 				?>
 				<?php
@@ -265,26 +266,26 @@ class Listeo_Core_Messages {
 							<p> Your Account Activation Link : <a href="<?php echo $activation_link; ?>">here</a></p>
 							<p>If you are facing any problems with verifying link, try copying and pasting the below url to your browser</p>
 							<p><?php echo $activation_link; ?></p>
-						<?php 
+						<?php
 					}
 				?>
 				</td>
 			</tr>
 		<?php
-			$template_loader->get_template_part( 'emails/footer' ); 
+			$template_loader->get_template_part( 'emails/footer' );
 			$content = ob_get_clean();
-   
+
 		wp_mail( @$emailto, @$subject, @$content, $headers );
 
 	}
-	
+
 
     public  function send_new_message( $args = 0 )  {
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         global $wpdb;
 
         // TODO: filter by parameters
-       
+
         $sql = "
                 CREATE TABLE {$wpdb->prefix}listeo_core_messages_attachements (
                   id bigint(20) NOT NULL auto_increment,
@@ -305,13 +306,13 @@ class Listeo_Core_Messages {
             'attachement_id'    => $args['attachement_id'],
             'created_at'        => current_time( 'timestamp' ),
         ));
-    
+
     	if(isset($args['is_offer_message']) && $args['is_offer_message'] == 1) {
 			$result =  $wpdb -> insert( $wpdb->prefix . 'listeo_core_messages', array(
             	'conversation_id' 	=> $args['conversation_id'],
             	'sender_id' 		=> $args['sender_id'],
             	'message' 			=> stripslashes_deep($args['message']),
-            	'is_offer_message'  => 1, 
+            	'is_offer_message'  => 1,
             	'created_at' 		=> current_time( 'timestamp' ),
         	));
 		}
@@ -321,7 +322,7 @@ class Listeo_Core_Messages {
             	'sender_id' 		=> $args['sender_id'],
             	'message' 			=> stripslashes_deep($args['message']),
             	'created_at' 		=> current_time( 'timestamp' ),
-        	));	
+        	));
 		}
 
         if(isset($wpdb->insert_id)) {
@@ -352,7 +353,7 @@ class Listeo_Core_Messages {
         $att_id = $this->add_images();
 
         $conv_arr = array();
-        
+
         $conv_arr['recipient'] = $recipient;
         $conv_arr['referral'] = $referral;
         $conv_arr['message'] = $message;
@@ -361,7 +362,7 @@ class Listeo_Core_Messages {
         //check if conv exists
         $con_exists = $this->conversation_exists($recipient,$referral);
         $new_converstation  = ($con_exists) ? $con_exists : $this->start_conversation($conv_arr) ;
-        
+
 
         if($new_converstation){
             $message = $_REQUEST['message'];
@@ -373,10 +374,11 @@ class Listeo_Core_Messages {
             $mess_arr['recipient'] = $_REQUEST['recipient'];
             $id = $this->send_new_message($mess_arr);
         }
-        
+
         if($id) {
             $result['type'] = 'success';
             $result['message'] = __( 'Your message was successfully sent' , 'listeo_core' );
+            $result['att_id'] = $att_id;
         } else {
             $result['type'] = 'error';
             $result['message'] = __( 'Message couldn\'t be send' , 'listeo_core' );
@@ -385,25 +387,25 @@ class Listeo_Core_Messages {
         $result = json_encode($result);
 		//do_action('listeo_mail_to_user_new_message',$conversation_id);
 		$this->reminder_new_message($mess_arr);
-		
-        echo $result;      
+
+        echo $result;
         die();
     }
 
     public function add_images() {
         $arr_img_ext = array('image/png', 'image/jpeg', 'image/jpg', 'image/gif');
         if(!empty($_FILES['file'])){
-            for($i = 0; $i < count($_FILES['file']['name']); $i++) { 
+            for($i = 0; $i < count($_FILES['file']['name']); $i++) {
 
                 if (in_array($_FILES['file']['type'][$i], $arr_img_ext)) {
 
                     $wp_upload_dir = wp_upload_dir();
-                    $wp_upload_dir       = wp_upload_dir(); 
+                    $wp_upload_dir       = wp_upload_dir();
                     $unique_file_name = wp_unique_filename( $wp_upload_dir['basedir'].'/messages', $_FILES['file']['name'][$i] ) ;
                     //print_r($unique_file_name);
 
                     //print_r($wp_upload_dir);
-                    
+
                     $filename = basename( $unique_file_name );
                     //$file1 = $wp_upload_dir['url'] . '/' . $filename;
                     if( wp_mkdir_p( $wp_upload_dir['path'] ) ) {
@@ -411,7 +413,7 @@ class Listeo_Core_Messages {
                     } else {
                             $file = $wp_upload_dir['basedir'] . '/' . $filename;
                     }
-                    $file = $wp_upload_dir['basedir'] . '/messages/' . $filename; 
+                    $file = $wp_upload_dir['basedir'] . '/messages/' . $filename;
                     //$wp_filetype = wp_check_filetype( $filename, null );
                     /*$data = file_get_contents($image["tmp_name"]);
                     $url = $wp_upload_dir[basedir]."/messages/".$_FILES['file']['name'][$i];
@@ -423,7 +425,7 @@ class Listeo_Core_Messages {
                     $data = file_get_contents($_FILES['file']['tmp_name'][$i]);
                     file_put_contents( $file, $data );
 
-                    
+
                     $images[$i] = $file;
                     //$images[$i] = wp_upload_bits($_FILES['file']['name'][$i], null, file_get_contents($_FILES['file']['tmp_name'][$i]));
 
@@ -433,7 +435,7 @@ class Listeo_Core_Messages {
                     // Prepare an array of post data for the attachment.
                     $attachment = array(
 
-                        'guid'           => $url, 
+                        'guid'           => $url,
                         'post_mime_type' => $_FILES['file']['type'][$i],
                         'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $_FILES['file']['name'][$i] ) ),
                         'post_content'   => '',
@@ -448,11 +450,11 @@ class Listeo_Core_Messages {
                     $result['type'] = 'error';
                     $result['message'] = __( 'Invalid Image' , 'listeo_core' );
                     $result = json_encode($result);
-                    echo $result; 
+                    echo $result;
                     die();
                 }
             }
-        } 
+        }
         $flag = 0;
         foreach ($attachement_id as $key => $value) {
             if($flag == 1):
@@ -464,31 +466,31 @@ class Listeo_Core_Messages {
         return $att_id;
     }
 
-    public function send_message_ajax_chat() { 
-        
-		
+    public function send_message_ajax_chat() {
+
+
         $conversation_id = $_REQUEST['conversation_id'];
     	$message = $_REQUEST['message'];
 
         $att_id = $this->add_images();
-      
+
         if(empty($message)){
             $result['type'] = 'error';
             $result['message'] = __( 'Empty message' , 'listeo_core' );
             $result = json_encode($result);
-            echo $result;  
-           
+            echo $result;
+
             die();
         }
         if(empty($conversation_id)){
             $result['type'] = 'error';
             $result['message'] = __( 'Whoops, we have a problem' , 'listeo_core' );
             $result = json_encode($result);
-            echo $result;  
-           
+            echo $result;
+
             die();
         }
-    	    	
+
     	$mess_arr['conversation_id'] = $conversation_id;
     	$mess_arr['sender_id'] = get_current_user_id();
     	$mess_arr['message'] = $message;
@@ -496,21 +498,23 @@ class Listeo_Core_Messages {
         $mess_arr['recipient'] = $_REQUEST['recipient'];
 
     	$id = $this->send_new_message($mess_arr);
-        
+
         if($id) {
             $result['type'] = 'success';
             $result['message'] = __( 'Your message was successfully sent' , 'listeo_core' );
+            $result['att_id'] = $att_id;
+
         } else {
             $result['type'] = 'error';
             $result['message'] = __( 'Message couldn\'t be send' , 'listeo_core' );
         }
 
         $result = json_encode($result);
-		
+
 		$this->reminder_new_message($mess_arr);
-		
-        echo $result;  
-	   
+
+        echo $result;
+
 	    die();
     }
 
@@ -523,15 +527,15 @@ class Listeo_Core_Messages {
 
         global $wpdb;
         if ( $limit != '' ) $limit = " LIMIT " . esc_sql($limit);
-        
+
         if ( is_numeric($offset)) $offset = " OFFSET " . esc_sql($offset);
 
         $result  = $wpdb -> get_results( "
-        SELECT * FROM `" . $wpdb->prefix . "listeo_core_conversations` 
+        SELECT * FROM `" . $wpdb->prefix . "listeo_core_conversations`
         WHERE  user_1 = '$user_id' OR user_2 = '$user_id'
         ORDER BY last_update DESC $limit $offset
         ");
-        
+
         return $result;
     }
 
@@ -539,30 +543,30 @@ class Listeo_Core_Messages {
         global $wpdb;
         $user_id = get_current_user_id();
         $conversation = $this->get_conversation($conv_id);
-        
+
         if($conversation){
-            
+
             if($conversation[0]->user_1 == $user_id || $conversation[0]->user_2 == $user_id ){
 
                 $result = $wpdb -> delete( $wpdb->prefix . 'listeo_core_conversations', array( 'id' => $conv_id) );
                 $wpdb -> delete( $wpdb->prefix . 'listeo_core_messages', array( 'conversation_id' => $conv_id) );
                 return $result;
-            
+
             } else {
-            
+
                 return false;
-            
+
             }
         } else {
             return false;
         }
-       
+
         return false;
     }
 
 //     public function get_conversations_by_latest(){
 //         global $wpdb
-// SELECT conv.id FROM wp_listeo_core_conversations AS conv LEFT JOIN wp_listeo_core_messages AS mes ON conv.id=mes.conversation_id  order by mes.created_at DESC 
+// SELECT conv.id FROM wp_listeo_core_conversations AS conv LEFT JOIN wp_listeo_core_messages AS mes ON conv.id=mes.conversation_id  order by mes.created_at DESC
 //     }
 
     public function get_conversation_ajax() {
@@ -594,21 +598,21 @@ class Listeo_Core_Messages {
     							<div class="message-avatar">
     		                    	<a href="<?php echo esc_url(get_author_posts_url($message->sender_id)); ?>">
     		                    		<?php //echo get_avatar($message->sender_id, '70') ?>
-                                        <?php                                                   
+                                        <?php
                                         $custom_avatar_id   = get_the_author_meta( 'listeo_core_avatar_id', $message->sender_id ) ;
                                         $custom_avatar      = wp_get_attachment_image_src( $custom_avatar_id, 'listeo-avatar' );
 
                                         if ( $custom_avatar )  {
                                             echo "<img src='".$custom_avatar[0]."' style='border-radius: 50% !important;'> <br/>";
                                         } else {
-                                            echo get_avatar( $message->sender_id, 70 );  
+                                            echo get_avatar( $message->sender_id, 70 );
                                         }
                                         ?>
     		                    	</a>
     	                    	</div>
     							<div class="message-text">
     	                    	<?php echo wpautop($message->message) ?>
-    	                    	<?php 
+    	                    	<?php
     		                        if($message->attachement_id){
     		                            ?>
     		                            <div class="view-attachment">
@@ -630,10 +634,10 @@ class Listeo_Core_Messages {
     					                                </a>
     					                            <?php
     					                            }
-    					                    ?>                                  
+    					                    ?>
     					                    </div>
     		                    		</div>
-    		                    <?php       
+    		                    <?php
     		                        }
     		                    ?> </div>
     		                    </div>
@@ -646,40 +650,40 @@ class Listeo_Core_Messages {
     							<div class="message-avatar">
     								<a href="<?php echo esc_url(get_author_posts_url($message->sender_id)); ?>">
     									<?php //echo get_avatar($message->sender_id, '70') ?>
-                                        <?php                                                   
+                                        <?php
                                         $custom_avatar_id   = get_the_author_meta( 'listeo_core_avatar_id', $message->sender_id ) ;
                                         $custom_avatar      = wp_get_attachment_image_src( $custom_avatar_id, 'listeo-avatar' );
 
                                         if ( $custom_avatar )  {
                                             echo "<img src='".$custom_avatar[0]."' style='border-radius: 50% !important;'> <br/>";
                                         } else {
-                                            echo get_avatar( $message->sender_id, 70 );  
+                                            echo get_avatar( $message->sender_id, 70 );
                                         }
                                         ?>
     								</a>
     							</div>
     							<div class="message-text listeo_is_offer_message_text">
-    								<div class="listeo_is_offer_price_title">	
+    								<div class="listeo_is_offer_price_title">
     									<h6><?php echo $message_arr[0]; ?></h6>
     									<span><?php echo $message_arr[2]; ?></span>
     								</div>
     								<div class="listeo_is_offer_desc_dtl">
     									<p><?php echo $message_arr[1]; ?></p>
     								</div>
-    								<div class="listeo_offer_payment_url_btn"> 
-    									<a target="_blank" href="<?php echo $message_arr[3]; ?>">pay</a> 
+    								<div class="listeo_offer_payment_url_btn">
+    									<a target="_blank" href="<?php echo $message_arr[3]; ?>">pay</a>
     								</div>
-    								
+
     							</div>
     						</div>
-                            <?php 
-                        } 
-                        
+                            <?php
+                        }
+
                     ?>
                 <?php }
             }
             $output = ob_get_clean();
-            
+
             if( $diff < 7 ){
                $result['type'] = 'success';
             } else {
@@ -687,7 +691,7 @@ class Listeo_Core_Messages {
             }
             $result['message'] = $output;
             $result = json_encode($result);
-            echo $result;  
+            echo $result;
         die();
     }
 
@@ -702,8 +706,8 @@ class Listeo_Core_Messages {
             $conversation = $this->get_single_conversation($user_id,$conversation_id);
             $first_sender_user_id = $conversation[0]->sender_id;
             ob_start();
-            foreach ($conversation as $key => $message) { ?>      
-                    <?php 
+            foreach ($conversation as $key => $message) { ?>
+                    <?php
                     if($message->is_offer_message == 0) {
                         ?>
 
@@ -715,7 +719,7 @@ class Listeo_Core_Messages {
                             </div>
                             <div class="listeo_msg_text listeo_view_attach_msg">
                                 <?php echo wpautop($message->message) ?>
-                                <?php 
+                                <?php
                                     if($message->attachement_id){
                                     ?>
                                     <div class="view-attachment">
@@ -735,10 +739,10 @@ class Listeo_Core_Messages {
                                                             <i class="fa fa-download" aria-hidden="true"></i>
                                                         </span>
                                                     </a>
-                                             <?php } ?>                                  
+                                             <?php } ?>
                                         </div>
                                     </div>
-                                <?php } ?> 
+                                <?php } ?>
                             </div>
                         </div>
                         <?php
@@ -753,28 +757,28 @@ class Listeo_Core_Messages {
                                 </a>
                             </div>
                             <div class="listeo_msg_text listeo_is_offer_message_text">
-                                <div class="listeo_is_offer_price_title">   
+                                <div class="listeo_is_offer_price_title">
                                     <h6><?php echo $message_arr[0]; ?></h6>
                                     <span><?php echo $message_arr[2]; ?></span>
                                 </div>
                                 <div class="listeo_is_offer_desc_dtl">
                                     <p><?php echo $message_arr[1]; ?></p>
                                 </div>
-                                <div class="listeo_offer_payment_url_btn"> 
-                                    <a target="_blank" href="<?php echo $message_arr[3]; ?>">pay</a> 
+                                <div class="listeo_offer_payment_url_btn">
+                                    <a target="_blank" href="<?php echo $message_arr[3]; ?>">pay</a>
                                 </div>
-                                
+
                             </div>
                         </div>
                       <?php } ?>
-                
+
             <?php }
             $output = ob_get_clean();
-            
+
             $result['type'] = 'success';
             $result['message'] = $output;
             $result = json_encode($result);
-            echo $result;  
+            echo $result;
         die();
     }
 
@@ -783,7 +787,7 @@ class Listeo_Core_Messages {
         global $wpdb;
 
         $result  = $wpdb -> get_results( "
-        SELECT * FROM `" . $wpdb->prefix . "listeo_core_conversations` 
+        SELECT * FROM `" . $wpdb->prefix . "listeo_core_conversations`
         WHERE  id = '$conversation_id'
 
         ");
@@ -797,19 +801,19 @@ class Listeo_Core_Messages {
         global $wpdb;
 
         $result1  = $wpdb -> get_results( "
-        SELECT * FROM `" . $wpdb->prefix . "listeo_core_messages` 
-        WHERE  conversation_id = '$conversation_id' 
+        SELECT * FROM `" . $wpdb->prefix . "listeo_core_messages`
+        WHERE  conversation_id = '$conversation_id'
         ORDER BY created_at ASC
         ");
-        
+
         $result2 = $wpdb -> get_results( "
-        SELECT * FROM `" . $wpdb->prefix . "listeo_core_messages_attachements` 
-        WHERE  conversation_id = '$conversation_id' 
+        SELECT * FROM `" . $wpdb->prefix . "listeo_core_messages_attachements`
+        WHERE  conversation_id = '$conversation_id'
         ORDER BY created_at ASC
         ");
         $i=0;
         foreach ($result1 as $key1 => $value1) {
-            $result[$i] = $value1;            
+            $result[$i] = $value1;
             foreach ($result2 as $key2 => $value2) {
                 if ($value1->created_at == $value2->created_at) {
                    $result[$i]->attachement_id = $value2->attachement_id;
@@ -829,7 +833,7 @@ class Listeo_Core_Messages {
 
                    $listing_id = str_replace('listing_','',$referral);
                    return get_the_title($listing_id);
-            } 
+            }
             if (strpos($referral, 'booking_') !== false) {
 
                    $booking_id = str_replace('booking_','',$referral);
@@ -840,7 +844,7 @@ class Listeo_Core_Messages {
                    return __('Reservation for ','listeo_core').$title;
             }
         }
-        
+
     }
 
     /**
@@ -853,7 +857,7 @@ class Listeo_Core_Messages {
         global $wpdb;
 
         $result  = $wpdb -> get_results( "
-        SELECT * FROM `" . $wpdb->prefix . "listeo_core_messages` 
+        SELECT * FROM `" . $wpdb->prefix . "listeo_core_messages`
         WHERE  conversation_id = '$conversation'
         ORDER BY created_at DESC LIMIT 1
         ");
@@ -870,9 +874,9 @@ class Listeo_Core_Messages {
     public  function mark_as_read( $conversation)  {
 
         global $wpdb;
-        
+
         $conv = $this->get_conversation($conversation);
-        
+
         if($conv[0]->user_1 == get_current_user_id()) {
             $user = 'user_1';
             $other_user=$conv[0]->user_2;
@@ -881,21 +885,21 @@ class Listeo_Core_Messages {
             $other_user=$conv[0]->user_1;
         }
 
-        $result  = $wpdb->update( 
-            $wpdb->prefix . 'listeo_core_conversations', 
-            array( 'read_'.$user  => 1 ), 
-            array( 'id' => $conversation ) 
+        $result  = $wpdb->update(
+            $wpdb->prefix . 'listeo_core_conversations',
+            array( 'read_'.$user  => 1 ),
+            array( 'id' => $conversation )
         );
 
-        $result  = $wpdb->update( 
-            $wpdb->prefix . 'listeo_core_messages', 
-            array( 'reminded'  => 1 ), 
-            array( 
+        $result  = $wpdb->update(
+            $wpdb->prefix . 'listeo_core_messages',
+            array( 'reminded'  => 1 ),
+            array(
                 'conversation_id' => $conversation,
                 'sender_id' => $other_user
-            ) 
+            )
         );
-        
+
         return $result;
     }
     /**
@@ -907,14 +911,14 @@ class Listeo_Core_Messages {
 
         global $wpdb;
 
-        $result  = $wpdb->update( 
-            $wpdb->prefix . 'listeo_core_conversations', 
-            array( 'last_update' => current_time( 'timestamp' ) ), 
-            array( 'id' => $conversation ) 
+        $result  = $wpdb->update(
+            $wpdb->prefix . 'listeo_core_conversations',
+            array( 'last_update' => current_time( 'timestamp' ) ),
+            array( 'id' => $conversation )
         );
-        
+
         return $result;
-    } 
+    }
 
     /**
     * Mark as unread
@@ -925,17 +929,17 @@ class Listeo_Core_Messages {
 
         global $wpdb;
 
-        $result  = $wpdb->update( 
-            $wpdb->prefix . 'listeo_core_conversations', 
-            array( 'read_'.$user => 0 ), 
-            array( 
+        $result  = $wpdb->update(
+            $wpdb->prefix . 'listeo_core_conversations',
+            array( 'read_'.$user => 0 ),
+            array(
                 'id' => $conversation ,
-                'notification' => '' 
-            ) 
+                'notification' => ''
+            )
         );
-        
+
         return $result;
-    }  
+    }
 
     /**
 	* Check if read
@@ -944,7 +948,7 @@ class Listeo_Core_Messages {
 	*/
 	public  function check_if_read( $conversation_data)  {
         $user_id = get_current_user_id();
-       
+
         if(isset($conversation_data)){
             if( (string) $conversation_data[0]->user_1 == $user_id){
                 return $conversation_data[0]->read_user_1;
@@ -952,7 +956,7 @@ class Listeo_Core_Messages {
                 return $conversation_data[0]->read_user_2;
             }
         }
-        
+
     }
 
     public function conversation_exists($recipient,$referral){
@@ -971,64 +975,64 @@ class Listeo_Core_Messages {
 	 * User messages shortcode
 	 */
 	public function listeo_messages( $atts ) {
-		
+
 		if ( ! is_user_logged_in() ) {
 			return __( 'You need to be signed in to manage your messages.', 'listeo_core' );
 		}
 
 		$user_id = get_current_user_id();
-	
+
 		extract( shortcode_atts( array(
 			'posts_per_page' => '25',
 		), $atts ) );
         $limit = 7;
         $page = (isset($_GET['messages-page'])) ? $_GET['messages-page'] : 1;
-        
+
         $offset = ( absint( $page ) - 1 ) * absint( $limit );
-        
+
 		ob_start();
 		$template_loader = new Listeo_Core_Template_Loader;
         if( isset( $_GET["action"]) && $_GET["action"] == 'view' )  {
 			//echo 'bfndgnfgn';
-            $template_loader->set_template_data( 
-                array( 
-                    'ids' => $this->get_conversations($user_id) 
+            $template_loader->set_template_data(
+                array(
+                    'ids' => $this->get_conversations($user_id)
                 )
-            ) -> get_template_part( 'account/single_message_new' ); 
+            ) -> get_template_part( 'account/single_message_new' );
         } else {
             if( isset( $_GET["action"]) && $_GET["action"] == 'delete' )  {
                 if(isset( $_GET["conv_id"]) && !empty($_GET["conv_id"])) {
                     $conv_id = $_GET["conv_id"];
-                    $delete = $this->delete_conversations($conv_id);   
+                    $delete = $this->delete_conversations($conv_id);
                     if($delete) { ?>
                         <div class="notification success"><p><?php esc_html_e('Conversation was removed','listeo_core'); ?></p></div>
                     <?php } else { ?>
                         <div class="notification error"><p><?php esc_html_e('Conversation couldn\'t be removed.','listeo_core'); ?></p></div>
                     <?php }
-                } 
+                }
             }
             $total = count($this->get_conversations($user_id));
             $max_number_pages = ceil($total/$limit);
-			
-            $template_loader->set_template_data( 
-                array( 
+
+            $template_loader->set_template_data(
+                array(
                     'ids' => $this->get_conversations($user_id,$limit,$offset),
                     'total_pages' => $max_number_pages
-                ) 
-            ) -> get_template_part( 'account/messages-list' ); 
+                )
+            ) -> get_template_part( 'account/messages-list' );
         }
 
 		return ob_get_clean();
 	}
-	
+
 	// Create Offer ajax function
    	public function listeo_create_offer(){
    		$user_id = $_REQUEST['user_id'];
         $listeo_offer_title = $_REQUEST['listeo_offer_title'];
-		$listeo_offer_description = $_REQUEST['listeo_offer_description']; 
-		$listeo_offer_price = $_REQUEST['listeo_offer_price']; 
-		$conversation_id = $_REQUEST['conversation_id']; 
-        
+		$listeo_offer_description = $_REQUEST['listeo_offer_description'];
+		$listeo_offer_price = $_REQUEST['listeo_offer_price'];
+		$conversation_id = $_REQUEST['conversation_id'];
+
         // Custom Add WC Product
 		$objProduct = new WC_Product();
 		$objProduct->set_name($listeo_offer_title);
@@ -1038,27 +1042,27 @@ class Listeo_Core_Messages {
 		$objProduct->set_regular_price($listeo_offer_price); // set product regular price
 		$objProduct->set_manage_stock(true); // true or false
 		$objProduct->set_stock_quantity(1);
-		
+
 		$product_id = $objProduct->save();
-		
+
 		//call add custom offer woocommerce order action
-		
+
 		$order_details = wc_custom_offer_order_fun($product_id,$user_id);
-		
+
 		$payment_url = $order_details['payment_url'];
 		$order_id = $order_details['order_id'];
 		$currency_symbol = $order_details['currency_symbol'];
-		
-		
-		if(isset($order_id) && $order_id != "") {		
-			$result['type'] = 'success';       
-			$result['product_id'] = $product_id; 
+
+
+		if(isset($order_id) && $order_id != "") {
+			$result['type'] = 'success';
+			$result['product_id'] = $product_id;
 			$result['order_id'] = $order_id;
 			$result['payment_url'] = $payment_url;
-			
+
 			$att_id = $this->add_images();
 			$msg_arr['conversation_id'] = $conversation_id;
-    		$msg_arr['sender_id'] = get_current_user_id();	 
+    		$msg_arr['sender_id'] = get_current_user_id();
     		$message = $listeo_offer_title."~@@@~".$listeo_offer_description."~@@@~".$currency_symbol." ".$listeo_offer_price."~@@@~".$payment_url;
     		$msg_arr['message'] = $message;
         	$msg_arr['attachement_id'] = $att_id;
@@ -1071,23 +1075,23 @@ class Listeo_Core_Messages {
 	        } else {
 	            $result['offer_type'] = 'error';
 	            $result['offer_message'] = __( 'Offer couldn\'t be send' , 'listeo_core' );
-	        }	
+	        }
 		}
 		else {
-			$result['type'] = 'error';        
+			$result['type'] = 'error';
 			$result['product_id'] = $product_id;
 			$result['order_id'] = $order_id;
 			$result['payment_url'] = $payment_url;
 		}
-       	 
+
         $result = json_encode($result);
-        echo $result;  
-	   
-	    die();		
+        echo $result;
+
+	    die();
 	}
-	
+
     public function send_unverify_listing_msg(){
-        
+
         $message = $_POST['message'];
         $listing_id = $_POST['listing_id'];
         $listing_url = get_the_permalink($listing_id);
@@ -1100,7 +1104,7 @@ class Listeo_Core_Messages {
 
         $user = get_userdata(get_current_user_id());
         $result['user'] = $user->display_name.'('.$user->user_email.')';
-        
+
         $mail_content = '<div><p><a href="'.$listing_url.'"> '.$listing_url.' </a> a message has been submitted via unverified form </p> <p> '.$message.' </p>By:<br>'.$result['user'].' </div>';
         $result['content'] = ($mail_content);
 
@@ -1111,11 +1115,11 @@ class Listeo_Core_Messages {
         else {
             $result['success'] = "0";
         }
-  
+
         $result = json_encode($result);
         echo $result;
-       
-        die();      
+
+        die();
     }
 
 }

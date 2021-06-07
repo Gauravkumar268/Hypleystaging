@@ -109,7 +109,6 @@
       });
 
 
-
       $('body').on('click', ".listeo_core-unbookmark-it", function(e){
           e.preventDefault();
           var handler = $(this);
@@ -849,9 +848,9 @@
 
 
           var form_data = new FormData();
-          //for(i=0; i<file_obj.length; i++) {
-          //  form_data.append('file[]', file_obj[i]);
-          //}
+          for(i=0; i<file_obj.length; i++) {
+           form_data.append('file[]', file_obj[i]);
+          }
 
           //Check if email has some email and phone number
           var emailExp = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/img;
