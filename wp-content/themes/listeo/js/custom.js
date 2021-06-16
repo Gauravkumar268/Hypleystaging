@@ -1451,4 +1451,9 @@ $('.listeo_liting_single_galary_image').on('click',function(){
     console.log('click seconnn');
 });
 
+$('.listing-slider').on('afterChange', function(event, slick, currentSlide, nextSlide){
+    $('.listeo_gallery_currentslide').text(currentSlide+1);
+    // $('listeo_gallery_currentslide').text(currentSlide+1);
+});
+
 })(this.jQuery);

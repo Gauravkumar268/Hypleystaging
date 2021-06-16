@@ -2952,6 +2952,21 @@ textarea.modified_message {
     background-color: #f65a5f;
 }
 
+.listeo_gallery_mobail_main{
+    position: relative;
+}
+.listeo_gallery_count_photos{
+    position: absolute;
+    right: 25px;
+    bottom: 25px;
+    z-index: 3 !important;
+    background-color: rgba(34, 34, 34, 0.66);
+    color: #FFFFFF;
+    padding: 2px 10px;
+    border-radius: 5px;
+}
+
+
 @media (max-width: 768px){ 
     #listeo_gallery_desktop{
         display: none !important;
@@ -2959,13 +2974,18 @@ textarea.modified_message {
     #listeo_gallery_mobail{
         display: block !important;
     }
-
+    .listeo_gallery_count_photos{
+        display: block !important;
+    }
 }
 @media (min-width: 768px) and (max-width: 992px) { 
     #listeo_gallery_desktop{
         display: block !important;
     }
     #listeo_gallery_mobail{
+        display: none !important;
+    }
+    .listeo_gallery_count_photos{
         display: none !important;
     }
     .listeo_gallery_main {
