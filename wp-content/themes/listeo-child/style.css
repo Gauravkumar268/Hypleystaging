@@ -2874,7 +2874,7 @@ textarea.modified_message {
 .listeo_gallery_first_full_img img{
     object-fit: cover;
     width: 100%;
-    height: 310px;
+    height: 510px;
     border-top-left-radius:10px;
     border-bottom-left-radius:10px;
 }
@@ -2899,7 +2899,7 @@ textarea.modified_message {
 .listeo_gallery_grid_img img{
     object-fit: cover;
     width: 100%;
-    height: 150px;
+    height: 250px;
 }
 
 .listeo_gallery_show_all_btn_min{
@@ -2955,6 +2955,7 @@ textarea.modified_message {
 .listeo_gallery_mobail_main{
     position: relative;
 }
+
 .listeo_gallery_count_photos{
     position: absolute;
     right: 25px;
@@ -2965,6 +2966,31 @@ textarea.modified_message {
     padding: 2px 10px;
     border-radius: 5px;
 }
+
+#pricing-list-container .pricing-image label{
+    height: 51px;
+    line-height: 51px;
+    padding: 0 20px;
+    outline: none;
+    font-size: 15px;
+    color: #808080;
+    margin: 0 0 16px 0;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    box-shadow: 0 1px 3px 0px rgb(0 0 0 / 6%);
+    font-weight: 500;
+    opacity: 1;
+    border-radius: 3px;
+}
+
+#pricing-list-container .pricing-category{
+    margin-left: 40px;
+}
+
 
 
 @media (max-width: 768px){ 
@@ -2996,7 +3022,7 @@ textarea.modified_message {
         display: none;
     }
     .listeo_gallery_img_3 img, .listeo_gallery_img_4 img{
-        height: 310px;
+        height: 510px;
         border-top-right-radius:10px;
         border-bottom-right-radius:10px;
     }
