@@ -195,7 +195,7 @@ endif;
 		<input type="hidden" 	name="listing_id" value="<?php echo esc_attr( $data->listing_id ); ?>" />
 		<input type="hidden" 	name="step" value="<?php echo esc_attr( $data->step ); ?>" />
 		
-		
+		<input type="hidden" 	name="_booking_status" value="1">
 		<button type="submit" value="<?php echo esc_attr( $data->submit_button_text ); ?>" name="submit_listing"  class="button margin-top-20"><i class="fa fa-arrow-circle-right"></i> <?php echo esc_attr( $data->submit_button_text ); ?></button>
 
 	</p>

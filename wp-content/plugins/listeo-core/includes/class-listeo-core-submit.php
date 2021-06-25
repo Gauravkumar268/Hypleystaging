@@ -1562,6 +1562,8 @@ class Listeo_Core_Submit  {
 			
 
 			$this->update_listing_data( $values );
+            
+            update_post_meta( $this->listing_id, "_booking_status", "1" );
 
 			// Successful, show next step
 			$this->step++;

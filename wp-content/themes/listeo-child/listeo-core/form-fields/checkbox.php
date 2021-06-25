@@ -12,11 +12,11 @@ $key = $data->key;
 		?>
 		<div class="switch_box box_1">
 			<div class="cd-switch">
-			  <div class="switch">	
+			  <div class="switch data-val-<?php echo $field['value']; ?>">	
 			    <input value="on" type="radio" name="<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>" id="<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>" checked>
 			    <label for="<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>">Yes</label>
-			    <input type="radio" name="<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>" id="no<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>">
-			    <label for="no<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>">No</label>
+			    <input value="" type="radio" name="<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>" id="no<?php echo esc_attr( isset( $field['name'] ) ? $field['name'] : $key ); ?>"  <?php if( isset( $field['value'] ) && $field['value'] == ""){ echo 'checked'; } ?>>
+			    <label for="no<?php echo esc_attr( isset(  $field['name'] ) ? $field['name'] : $key ); ?>">No</label>
 			    <span class="switchFilter"></span>
 			  </div>
 			</div>
