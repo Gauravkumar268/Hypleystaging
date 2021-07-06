@@ -16,6 +16,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="profile" href="http://gmpg.org/xfn/11">
 
+<script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/dc4285c4cb175999fbcda06d9/0746602a13fe3b6f31e5be09d.js");</script>
+
+<?php
+if( is_single() ) {
+	$business_title = get_post_meta(get_the_ID(),'_website',true);
+	?>
+	<script>
+  		document.title = "<?php echo get_the_title().' | '.$business_title.' | '.get_option('blogdescription').' - '.get_option('blogname'); ?>";
+	</script>
+	<?php
+}
+else {
+	?>
+	<script>
+  		document.title = "<?php echo get_the_title() .' | '. get_option('blogdescription') .' - '.get_option('blogname'); ?>";
+	</script>
+	<?php
+}
+?>
 
 <?php wp_head(); ?>
 </head>
@@ -88,7 +107,7 @@ if(is_singular()){
 $header_layout = apply_filters('listeo_header_layout_filter',$header_layout);
 $sticky = apply_filters('listeo_sticky_header_filter',$sticky);
 ?>
-<!-- Header Container
+<!-- Header Container222
 ================================================== -->
 <header id="header-container" class="<?php echo esc_attr(($sticky == true || $sticky == 1) ? "sticky-header" : ''); ?> <?php echo esc_attr($header_layout); ?>">
 
@@ -224,7 +243,7 @@ if( true == $my_account_display && !is_page_template( 'template-dashboard.php' )
 jQuery(document).on('click','.sign_in_link',function(){
         jQuery('.sign_up_li').removeClass('active');
 		 jQuery('.sign_in_li').addClass('active');
-        jQuery('.sign_in_li').trigger('click');
+         jQuery('.sign_in_li').trigger('click');
 	});
 
 jQuery(document).on('click','.sign_up_link',function(){
